@@ -3,11 +3,14 @@ package com.mdotm.assignment.application;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.mdotm.assignment.application.dto.PetDataDto;
 import com.mdotm.assignment.domain.Pet;
 import com.mdotm.assignment.domain.exception.PetNotFoundException;
 import com.mdotm.assignment.domain.port.PetRepository;
 
+@Service
 public class PetService {
 
     private final PetRepository petRepository;
@@ -53,7 +56,7 @@ public class PetService {
         }
         return petRepository.save(pet);
     }
-    
+
     public boolean delete(Long petId) {
         if (petRepository.getById(petId).isPresent()) {
             petRepository.deleteById(petId);
