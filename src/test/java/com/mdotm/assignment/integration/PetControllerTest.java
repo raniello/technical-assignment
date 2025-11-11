@@ -54,4 +54,24 @@ public class PetControllerTest {
         assertEquals(Arrays.asList(PetResponse.fromPet(existentPet)), retrievedPets);
 
     }
+
+    @Test
+    void getPetById() throws Exception {
+        var result = mockMvc.perform(get("/api/pets/" + existentPet.getId()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var json = result.getResponse().getContentAsString();
+        var retrievedPet = mapper.readValue(json, PetResponse.class);
+
+        assertEquals(PetResponse.fromPet(existentPet), retrievedPet);
+
+    }
+
+    @Test
+    void getPetByIdNotFound() throws Exception {
+        mockMvc.perform(get("/api/pets/9999"))
+                .andExpect(status().isNotFound());
+
+    }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +20,15 @@ public class PetController {
         this.petService = petService;
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping({ "", "/" })
     public ResponseEntity<List<PetResponse>> listAll() {
         return ResponseEntity.ok(petService.listAll().stream().map(PetResponse::fromPet).toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PetResponse> getById(@PathVariable Long id) {
+        return petService.getById(id)
+                .map(pet -> ResponseEntity.ok(PetResponse.fromPet(pet)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
