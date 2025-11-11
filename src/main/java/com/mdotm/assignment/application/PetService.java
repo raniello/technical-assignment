@@ -3,6 +3,7 @@ package com.mdotm.assignment.application;
 import java.util.List;
 import java.util.Optional;
 
+import com.mdotm.assignment.application.dto.PetDataDto;
 import com.mdotm.assignment.domain.Pet;
 import com.mdotm.assignment.domain.port.PetRepository;
 
@@ -18,7 +19,11 @@ public class PetService {
         return petRepository.findAll();
     }
 
-       public Optional<Pet> getById(Long id) {
+    public Optional<Pet> getById(Long id) {
         return petRepository.getById(id);
+    }
+
+    public Pet create(PetDataDto petData) {
+        return petRepository.save(petData.asPet());
     }
 }

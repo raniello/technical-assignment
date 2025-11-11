@@ -9,5 +9,6 @@ public interface PetRepository {
     public List<Pet> findAll();
 
     public Optional<Pet> getById(Long id);
-
+    
+    public Pet save(Pet pet);
 }

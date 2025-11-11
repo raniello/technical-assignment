@@ -6,7 +6,7 @@ public class Pet {
     private String species;
     private Integer age;
     private String ownerName;
-    
+
     private Pet(Long id, String name, String species, Integer age, String ownerName) {
         this.id = id;
         this.name = name;
@@ -35,11 +35,19 @@ public class Pet {
         return ownerName;
     }
 
-    public static Pet create(Long petId, String name, String species, Integer age) {
-        return create(petId, name, species, age, null);
+    public static Pet create(String name, String species, Integer age) {
+        return create(name, species, age, null);
     }
 
-    public static Pet create(Long petId, String name, String species, Integer age, String ownerName) {
+    public static Pet create(String name, String species, Integer age, String ownerName) {
+        return new Pet(null, name, species, age, ownerName);
+    }
+
+    public static Pet withId(Long petId, String name, String species, Integer age) {
+        return withId(petId, name, species, age, null);
+    }
+
+    public static Pet withId(Long petId, String name, String species, Integer age, String ownerName) {
         return new Pet(petId, name, species, age, ownerName);
     }
 }
