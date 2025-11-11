@@ -35,6 +35,22 @@ public class Pet {
         return ownerName;
     }
 
+    public void rename(String name) {
+        this.name = name;
+    }
+
+    public void changeSpecies(String species) {
+        this.species = species;
+    }
+
+    public void updateAge(Integer age) {
+        this.age = age;
+    }
+
+    public void updateOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     public static Pet create(String name, String species, Integer age) {
         return create(name, species, age, null);
     }

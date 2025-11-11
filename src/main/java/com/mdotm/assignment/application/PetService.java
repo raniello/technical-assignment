@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.mdotm.assignment.application.dto.PetDataDto;
 import com.mdotm.assignment.domain.Pet;
+import com.mdotm.assignment.domain.exception.PetNotFoundException;
 import com.mdotm.assignment.domain.port.PetRepository;
 
 public class PetService {
@@ -25,5 +26,14 @@ public class PetService {
 
     public Pet create(PetDataDto petData) {
         return petRepository.save(petData.asPet());
+    }
+
+    public Pet update(long petId, PetDataDto petData) {
+        var pet = petRepository.getById(petId).orElseThrow(() -> new PetNotFoundException(petId));
+        pet.rename(petData.name());
+        pet.changeSpecies(petData.species());
+        pet.updateAge(petData.age());
+        pet.updateOwnerName(petData.ownerName());
+        return petRepository.save(pet);
     }
 }

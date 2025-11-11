@@ -1,6 +1,7 @@
 package com.mdotm.assignment.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.mdotm.assignment.application.PetService;
 import com.mdotm.assignment.application.dto.PetDataDto;
 import com.mdotm.assignment.domain.Pet;
+import com.mdotm.assignment.domain.exception.PetNotFoundException;
 import com.mdotm.assignment.domain.port.PetRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,5 +72,30 @@ public class PetServiceTest {
         var actualSavedPet = petService.create(petData);
 
         assertEquals(expectedSavedPet, actualSavedPet);
+    }
+
+    @Test
+    void updatePet() {
+        var petId = Long.valueOf(1L);
+        var existingPet = Pet.withId(petId, "Gred", "Dog", 12);
+        var updateData = new PetDataDto("Anita", "Cat", 10, "Robertino");
+        var expectedUpdatedPet = updateData.asPet(petId);
+
+        when(petRepository.getById(petId)).thenReturn(Optional.of(existingPet));
+        when(petRepository
+                .save(argThat(pet -> petId.equals(pet.getId()) && updateData.equals(PetDataDto.fromPet(pet)))))
+                .thenReturn(expectedUpdatedPet);
+
+        var actualUpdatedPet = petService.update(petId, updateData);
+
+        assertEquals(expectedUpdatedPet, actualUpdatedPet);
+    }
+
+    @Test
+    void updatePetNotFound() {
+        var petId = Long.valueOf(1L);
+        var updateData = new PetDataDto("Anita", "Cat", 10, "Robertino");
+
+        assertThrows(PetNotFoundException.class, () -> petService.update(petId, updateData));
     }
 }
