@@ -56,6 +56,9 @@ public class Pet {
         this.ownerName = ownerName;
     }
 
+    public Pet withId(long id) {
+        return new Pet(id, name, species, age, ownerName);
+    }
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new PetValidationException("Name is required");
