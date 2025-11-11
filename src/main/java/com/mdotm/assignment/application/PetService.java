@@ -53,5 +53,12 @@ public class PetService {
         }
         return petRepository.save(pet);
     }
-
+    
+    public boolean delete(Long petId) {
+        if (petRepository.getById(petId).isPresent()) {
+            petRepository.deleteById(petId);
+            return true;
+        }
+        return false;
+    }
 }

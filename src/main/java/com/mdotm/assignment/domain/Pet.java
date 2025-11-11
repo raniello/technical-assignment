@@ -1,5 +1,7 @@
 package com.mdotm.assignment.domain;
 
+import com.mdotm.assignment.domain.exception.PetValidationException;
+
 public class Pet {
     private final Long id;
     private String name;
@@ -9,10 +11,10 @@ public class Pet {
 
     private Pet(Long id, String name, String species, Integer age, String ownerName) {
         this.id = id;
-        this.name = name;
-        this.species = species;
-        this.age = age;
-        this.ownerName = ownerName;
+        rename(name);
+        changeSpecies(species);
+        updateAge(age);
+        updateOwnerName(ownerName);
     }
 
     public Long getId() {
@@ -36,19 +38,40 @@ public class Pet {
     }
 
     public void rename(String name) {
+        validateName(name);
         this.name = name;
     }
 
     public void changeSpecies(String species) {
+        validateSpecies(species);
         this.species = species;
     }
 
     public void updateAge(Integer age) {
+        validateAge(age);
         this.age = age;
     }
 
     public void updateOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new PetValidationException("Name is required");
+        }
+    }
+
+    private void validateSpecies(String species) {
+        if (species == null || species.isBlank()) {
+            throw new PetValidationException("Species is required");
+        }
+    }
+
+    private void validateAge(Integer age) {
+        if (age == null || age < 0) {
+            throw new PetValidationException("Age is required");
+        }
     }
 
     public static Pet create(String name, String species, Integer age) {

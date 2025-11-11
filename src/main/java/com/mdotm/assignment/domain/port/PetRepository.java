@@ -11,4 +11,6 @@ public interface PetRepository {
     public Optional<Pet> getById(Long id);
     
     public Pet save(Pet pet);
+
+    public void deleteById(Long petId);
 }

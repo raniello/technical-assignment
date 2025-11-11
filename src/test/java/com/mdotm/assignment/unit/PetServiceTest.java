@@ -1,7 +1,9 @@
 package com.mdotm.assignment.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
@@ -100,21 +102,20 @@ public class PetServiceTest {
     }
 
     @Test
-    void partiallyUpdatePet(){
+    void partiallyUpdatePet() {
         var petId = Long.valueOf(1L);
         var existingPet = Pet.withId(petId, "Gred", "Dog", 12, "Jack");
         var updatedSpecies = "Cat";
         var updatedAge = 8;
         var expectedUpdatedPetData = new PetDataDto(
-            existingPet.getName(),
-            updatedSpecies,
-            updatedAge,
-            existingPet.getOwnerName()
-        );
+                existingPet.getName(),
+                updatedSpecies,
+                updatedAge,
+                existingPet.getOwnerName());
 
         when(petRepository.getById(petId)).thenReturn(Optional.of(existingPet));
         when(petRepository.save(argThat(pet -> petId.equals(pet.getId()))))
-        .thenAnswer(invocation -> invocation.getArgument(0, Pet.class));
+                .thenAnswer(invocation -> invocation.getArgument(0, Pet.class));
 
         var updateData = PetDataDto.empty().withSpecies(updatedSpecies).withAge(updatedAge);
         var actualUpdatedPet = petService.partiallyUpdate(petId, updateData);
@@ -124,11 +125,28 @@ public class PetServiceTest {
         assertEquals(expectedUpdatedPetData, actualUpdatedPedData);
     }
 
-    @Test 
-    void partiallyUpdatePetNotFound(){
+    @Test
+    void partiallyUpdatePetNotFound() {
         var petId = Long.valueOf(1L);
         var updateData = PetDataDto.empty().withSpecies("Cat").withAge(8);
-        
+
         assertThrows(PetNotFoundException.class, () -> petService.partiallyUpdate(petId, updateData));
+    }
+
+    @Test
+    void delete() {
+        var petToDelete = Pet.withId(1L, "Anita", "Cat", 10, "Robertino");
+        when(petRepository.getById(petToDelete.getId())).thenReturn(Optional.of(petToDelete));
+
+        var deleted = petService.delete(petToDelete.getId());
+
+        assertTrue(deleted);
+    }
+
+    @Test
+    void deleteNotFound() {
+        var deleted = petService.delete(7L);
+
+        assertFalse(deleted);
     }
 }
