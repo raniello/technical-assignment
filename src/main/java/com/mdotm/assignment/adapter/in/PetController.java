@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mdotm.assignment.adapter.in.dto.CreatePetRequest;
+import com.mdotm.assignment.adapter.in.dto.PatchPetRequest;
 import com.mdotm.assignment.adapter.in.dto.PetResponse;
 import com.mdotm.assignment.adapter.in.dto.UpdatePetRequest;
 import com.mdotm.assignment.application.PetService;
@@ -58,5 +60,11 @@ public class PetController {
         var pet = petService.update(id, new PetDataDto(request.name(), request.species(), request.age(), request.ownerName()));
         return ResponseEntity.ok(PetResponse.fromPet(pet));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PetResponse> patch(@PathVariable Long id, @Valid @RequestBody PatchPetRequest request) {
+        var pet = petService.partiallyUpdate(id, new PetDataDto(request.name(), request.species(), request.age(), request.ownerName()));
+        return ResponseEntity.ok(PetResponse.fromPet(pet));
+    }    
 
 }

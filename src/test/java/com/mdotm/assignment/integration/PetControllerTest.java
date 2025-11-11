@@ -134,6 +134,38 @@ public class PetControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(updatePetRequest)))
                 .andExpect(status().isNotFound());
-
     }
+
+    @Test
+    void partiallyUpdatePet()  throws Exception {
+        var patchPetRequest = new PatchPetRequest(null, "Cat", 2, null);
+        var result = mockMvc.perform(patch("/api/pets/"+existentPet.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(patchPetRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var json = result.getResponse().getContentAsString();
+        var updatedPet = mapper.readValue(json, PetResponse.class);
+
+        
+        var expectedPetResponse = new PetResponse(
+            existentPet.getId(), 
+            existentPet.getName(),
+            patchPetRequest.species(),
+            patchPetRequest.age(),
+            existentPet.getOwnerName()
+        );
+        assertEquals(expectedPetResponse, updatedPet);
+    }
+
+    @Test
+    void partiallyUpdatePetNotFound()  throws Exception {
+        var updatePetRequest = new UpdatePetRequest("Lemon", "Cat", 2, "Larry");
+        mockMvc.perform(patch("/api/pets/9999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatePetRequest)))
+                .andExpect(status().isNotFound());
+    }
+
 }
