@@ -36,4 +36,22 @@ public class PetService {
         pet.updateOwnerName(petData.ownerName());
         return petRepository.save(pet);
     }
+
+    public Pet partiallyUpdate(long petId, PetDataDto petData) {
+        var pet = petRepository.getById(petId).orElseThrow(() -> new PetNotFoundException(petId));
+        if (petData.name() != null) {
+            pet.rename(petData.name());
+        }
+        if (petData.species() != null) {
+            pet.changeSpecies(petData.species());
+        }
+        if (petData.age() != null) {
+            pet.updateAge(petData.age());
+        }
+        if (petData.ownerName() != null) {
+            pet.updateOwnerName(petData.ownerName());
+        }
+        return petRepository.save(pet);
+    }
+
 }

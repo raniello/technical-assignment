@@ -98,4 +98,37 @@ public class PetServiceTest {
 
         assertThrows(PetNotFoundException.class, () -> petService.update(petId, updateData));
     }
+
+    @Test
+    void partiallyUpdatePet(){
+        var petId = Long.valueOf(1L);
+        var existingPet = Pet.withId(petId, "Gred", "Dog", 12, "Jack");
+        var updatedSpecies = "Cat";
+        var updatedAge = 8;
+        var expectedUpdatedPetData = new PetDataDto(
+            existingPet.getName(),
+            updatedSpecies,
+            updatedAge,
+            existingPet.getOwnerName()
+        );
+
+        when(petRepository.getById(petId)).thenReturn(Optional.of(existingPet));
+        when(petRepository.save(argThat(pet -> petId.equals(pet.getId()))))
+        .thenAnswer(invocation -> invocation.getArgument(0, Pet.class));
+
+        var updateData = PetDataDto.empty().withSpecies(updatedSpecies).withAge(updatedAge);
+        var actualUpdatedPet = petService.partiallyUpdate(petId, updateData);
+        var actualUpdatedPedData = PetDataDto.fromPet(actualUpdatedPet);
+
+        assertEquals(petId, actualUpdatedPet.getId());
+        assertEquals(expectedUpdatedPetData, actualUpdatedPedData);
+    }
+
+    @Test 
+    void partiallyUpdatePetNotFound(){
+        var petId = Long.valueOf(1L);
+        var updateData = PetDataDto.empty().withSpecies("Cat").withAge(8);
+        
+        assertThrows(PetNotFoundException.class, () -> petService.partiallyUpdate(petId, updateData));
+    }
 }
