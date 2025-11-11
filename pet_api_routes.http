@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:8080/api
+@contentType = application/json
+
+###
+# Create a new Pet
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "name": "Fufi",
+  "species": "Dog",
+  "age": 3,
+  "ownerName": "Mark"
+}
+
+###
+# Get all pets
+GET {{baseUrl}}/pets
+Accept: application/json
+
+### 
+# Get pet by ID
+GET {{baseUrl}}/pets/1
+Accept: application/json
+
+###
+# Update a pet (full replacement)
+PUT {{baseUrl}}/pets/1
+Content-Type: {{contentType}}
+
+{
+  "name": "Fufi Updated",
+  "species": "Cat",
+  "age": 4,
+  "ownerName": "Jack"
+}
+
+###
+# Partial update (if supported)
+PATCH {{baseUrl}}/pets/1
+Content-Type: {{contentType}}
+
+{
+  "age": 15
+}
+
+###
+# Delete a pet
+DELETE {{baseUrl}}/pets/1
+
+###
+# Negative Test – Pet not found
+GET {{baseUrl}}/pets/9999
+Accept: application/json
+
+###
+# Negative Test – Invalid payload
+POST {{baseUrl}}/pets
+Content-Type: {{contentType}}
+
+{
+  "species": "Cat"
+}
