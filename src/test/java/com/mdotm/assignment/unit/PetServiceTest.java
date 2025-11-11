@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,5 +39,17 @@ public class PetServiceTest {
         var actualPets = petService.listAll();
 
         assertEquals(expectedPets, actualPets);
+    }
+
+    
+    @Test
+    void getPetById(){
+        var expectedPet = Pet.create(1L, "Anita", "Cat", 10, "Robertino");
+
+        when(petRepository.getById(expectedPet.getId())).thenReturn(Optional.of(expectedPet));
+
+        var actualPet = petService.getById(expectedPet.getId());
+
+        assertEquals(expectedPet, actualPet.orElse(null));
     }
 }
