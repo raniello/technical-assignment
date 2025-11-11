@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mdotm.assignment.adapter.in.dto.CreatePetRequest;
 import com.mdotm.assignment.adapter.in.dto.PetResponse;
+import com.mdotm.assignment.adapter.in.dto.UpdatePetRequest;
 import com.mdotm.assignment.application.PetService;
 import com.mdotm.assignment.application.dto.PetDataDto;
 
@@ -50,4 +52,11 @@ public class PetController {
                 .toUri();
         return ResponseEntity.created(location).body(PetResponse.fromPet(pet));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PetResponse> update(@PathVariable Long id, @Valid @RequestBody UpdatePetRequest request) {
+        var pet = petService.update(id, new PetDataDto(request.name(), request.species(), request.age(), request.ownerName()));
+        return ResponseEntity.ok(PetResponse.fromPet(pet));
+    }
+
 }

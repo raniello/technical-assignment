@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mdotm.assignment.adapter.in.dto.PetResponse;
 import com.mdotm.assignment.adapter.out.InMemoryPetRepository;
 import com.mdotm.assignment.domain.Pet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -90,15 +89,14 @@ public class PetControllerTest {
         var savedPet = mapper.readValue(json, PetResponse.class);
 
         var expectedPetResponse = new PetResponse(
-            savedPet.id(), 
-            createPetRequest.name(),
-            createPetRequest.species(),
-            createPetRequest.age(),
-            createPetRequest.ownerName()
-        );
+                savedPet.id(),
+                createPetRequest.name(),
+                createPetRequest.species(),
+                createPetRequest.age(),
+                createPetRequest.ownerName());
         assertEquals(expectedPetResponse, savedPet);
     }
-    
+
     @Test
     void createPetBadRequest() throws Exception {
         var createPetRequest = new CreatePetRequest("Lemon", "Cat", -2, "Larry");
@@ -106,5 +104,36 @@ public class PetControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(createPetRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updatePet() throws Exception {
+        var updatePetRequest = new UpdatePetRequest("Lemon", "Cat", 2, "Larry");
+        var result = mockMvc.perform(put("/api/pets/" + existentPet.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatePetRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var json = result.getResponse().getContentAsString();
+        var updatedPet = mapper.readValue(json, PetResponse.class);
+
+        var expectedPetResponse = new PetResponse(
+                existentPet.getId(),
+                updatePetRequest.name(),
+                updatePetRequest.species(),
+                updatePetRequest.age(),
+                updatePetRequest.ownerName());
+        assertEquals(expectedPetResponse, updatedPet);
+    }
+
+    @Test
+    void updatePetNotFound() throws Exception {
+        var updatePetRequest = new UpdatePetRequest("Lemon", "Cat", 2, "Larry");
+        mockMvc.perform(put("/api/pets/9999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatePetRequest)))
+                .andExpect(status().isNotFound());
+
     }
 }
