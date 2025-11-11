@@ -168,4 +168,16 @@ public class PetControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deletePet() throws Exception{
+        mockMvc.perform(delete("/api/pets/" + existentPet.getId()))
+                .andExpect(status().isNoContent());
+    }
+    
+    @Test
+    void deletePetNotFound() throws Exception {
+        mockMvc.perform(delete("/api/pets/9999"))
+                .andExpect(status().isNotFound());
+    }    
+
 }

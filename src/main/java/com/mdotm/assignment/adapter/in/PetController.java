@@ -3,6 +3,7 @@ package com.mdotm.assignment.adapter.in;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,6 +66,12 @@ public class PetController {
     public ResponseEntity<PetResponse> patch(@PathVariable Long id, @Valid @RequestBody PatchPetRequest request) {
         var pet = petService.partiallyUpdate(id, new PetDataDto(request.name(), request.species(), request.age(), request.ownerName()));
         return ResponseEntity.ok(PetResponse.fromPet(pet));
-    }    
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PetResponse> delete(@PathVariable Long id) {
+        var deleted = petService.delete(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 
 }
