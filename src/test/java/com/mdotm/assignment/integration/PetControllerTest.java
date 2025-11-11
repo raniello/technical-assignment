@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +20,7 @@ import com.mdotm.assignment.adapter.out.InMemoryPetRepository;
 import com.mdotm.assignment.domain.Pet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.mdotm.assignment.adapter.in.dto.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -73,5 +75,36 @@ public class PetControllerTest {
         mockMvc.perform(get("/api/pets/9999"))
                 .andExpect(status().isNotFound());
 
+    }
+
+    @Test
+    void createPet() throws Exception {
+        var createPetRequest = new CreatePetRequest("Lemon", "Cat", 2, "Larry");
+        var result = mockMvc.perform(post("/api/pets")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(createPetRequest)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var json = result.getResponse().getContentAsString();
+        var savedPet = mapper.readValue(json, PetResponse.class);
+
+        var expectedPetResponse = new PetResponse(
+            savedPet.id(), 
+            createPetRequest.name(),
+            createPetRequest.species(),
+            createPetRequest.age(),
+            createPetRequest.ownerName()
+        );
+        assertEquals(expectedPetResponse, savedPet);
+    }
+    
+    @Test
+    void createPetBadRequest() throws Exception {
+        var createPetRequest = new CreatePetRequest("Lemon", "Cat", -2, "Larry");
+        mockMvc.perform(post("/api/pets")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(createPetRequest)))
+                .andExpect(status().isBadRequest());
     }
 }
