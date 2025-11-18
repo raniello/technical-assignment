@@ -100,3 +100,9 @@ $RECYCLE.BIN/
 *.tmp
 *.swp
 *.swo
+
+# -----------------------------------------
+# Fix issue with the naming of the following folder. 
+# Probably it would be better to rename the folder, but I will keep it as it is to highlight the issue
+# -----------------------------------------
+!src/main/java/com/mdotm/assignment/adapter/out/
